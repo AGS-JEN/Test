@@ -1,6 +1,13 @@
 name: Build and Test
 
-on: [pull_request]
+on: 
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      param:
+        description: 'test description'
+        required: false
+        default: 'default value'
 
 jobs:
   build:
