@@ -1,23 +1,23 @@
 import mongoose from "mongoose";
 
 // 假设你已经定义了User, Role, Permission的Schema
-const UserSchema = new mongoose.Schema({
-  email: String,
-  roles: [{ type: mongoose.Schema.Types.ObjectId, ref: "roles" }],
+const PermissionSchema = new mongoose.Schema({
+  permission: String,
 });
-
 const RoleSchema = new mongoose.Schema({
   name: String,
-  permissions: [{ type: mongoose.Schema.Types.ObjectId, ref: "permissions" }],
+  permissions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Permission" }],
+});
+const UserSchema = new mongoose.Schema({
+  email: String,
+  roles: [{ type: mongoose.Schema.Types.ObjectId, ref: "Role" }],
 });
 
-const PermissionSchema = new mongoose.Schema({
-  name: String,
-});
 
-const User = mongoose.model("users", UserSchema);
-const Role = mongoose.model("roles", RoleSchema);
-const Permission = mongoose.model("permissions", PermissionSchema);
+const User = mongoose.model("User", UserSchema);
+const Role = mongoose.model("Role", RoleSchema);
+const Permission = mongoose.model("Permission", PermissionSchema);
+
 
 async function connectToMongoDB() {
   try {
@@ -35,15 +35,14 @@ async function getUserWithRolesAndPermissions(email: string) {
     await connectToMongoDB();
     const user = await User.findOne({ email: email })
       .populate({
-        path: "roles",
-        select: "role",
+        path: "roles",        
         populate: {
           path: "permissions",
-          select: "permission",
+          select:'permission', 
+          model:'Permission',
         },
       })
-      .exec();
-
+      .exec();  
     if (!user) {
       console.log("User not found");
       return null;
@@ -61,11 +60,11 @@ export function testMongoose(email: string) {
   getUserWithRolesAndPermissions(email)
     .then((user) => {
       if (user) {
-        console.log("User:", user);
+        // console.log("User:", user);
         console.log("Roles:", user.roles);
         console.log(
           "Permissions:",
-          user.roles.flatMap((role) => role.permissions)
+          user.roles.flatMap((role:any) => role.permissions)
         );
       }
     })
