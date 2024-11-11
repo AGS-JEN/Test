@@ -1,4 +1,6 @@
-import { testMongoose } from "./mongoose";
+import { mainTest } from "./mongoose";
+
 
 console.log("hello, world");
-testMongoose("system.admin@nimbusgroup.us")
+
+mainTest().then(res=>console.log(res));

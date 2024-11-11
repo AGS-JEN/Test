@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import { CompanyModel } from "./Models/companyModel";
+import { BranchModel } from "./Models/branchModel";
 
 // 假设你已经定义了User, Role, Permission的Schema
 const PermissionSchema = new mongoose.Schema({
@@ -55,7 +57,8 @@ async function getUserWithRolesAndPermissions(email: string) {
   }
 }
 
-export function testMongoose(email: string) {
+
+export function testMongoose2(email: string) {
   // 使用示例
   getUserWithRolesAndPermissions(email)
     .then((user) => {
@@ -72,3 +75,24 @@ export function testMongoose(email: string) {
       console.error("Error:", error);
     });
 }
+
+export async function mainTest() {
+  await connectToMongoDB();
+  console.log("Connected...");
+  
+  const companyBrokerIds = await CompanyModel.findById("66b381df4a17e200495cef91")
+  .select("branches")
+  .populate('branches').exec()
+  console.log(companyBrokerIds);
+  
+  const branches = await BranchModel.find({
+      _id: { $in: companyBrokerIds?.branches }
+    }).exec();
+  console.log("branches value is :");
+  
+  console.log(branches);
+  
+  const total = branches.length;
+     
+}
+
