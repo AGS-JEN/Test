@@ -1,27 +1,23 @@
 import mongoose from "mongoose";
-import { CompanyModel } from "./Models/companyModel";
-import { BranchModel } from "./Models/branchModel";
-import { DbConnectString } from "./config";
-import { TestAggregation } from "./Tests/TestAggregation";
 
 // 假设你已经定义了User, Role, Permission的Schema
-const PermissionSchema = new mongoose.Schema({
-  permission: String,
-});
-const RoleSchema = new mongoose.Schema({
-  name: String,
-  permissions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Permission" }],
-});
 const UserSchema = new mongoose.Schema({
   email: String,
-  roles: [{ type: mongoose.Schema.Types.ObjectId, ref: "Role" }],
+  roles: [{ type: mongoose.Schema.Types.ObjectId, ref: "roles" }],
 });
 
+const RoleSchema = new mongoose.Schema({
+  name: String,
+  permissions: [{ type: mongoose.Schema.Types.ObjectId, ref: "permissions" }],
+});
 
-const User = mongoose.model("User", UserSchema);
-const Role = mongoose.model("Role", RoleSchema);
-const Permission = mongoose.model("Permission", PermissionSchema);
+const PermissionSchema = new mongoose.Schema({
+  name: String,
+});
 
+const User = mongoose.model("users", UserSchema);
+const Role = mongoose.model("roles", RoleSchema);
+const Permission = mongoose.model("permissions", PermissionSchema);
 
 async function connectToMongoDB() {
   try {
@@ -39,14 +35,15 @@ async function getUserWithRolesAndPermissions(email: string) {
     await connectToMongoDB();
     const user = await User.findOne({ email: email })
       .populate({
-        path: "roles",        
+        path: "roles",
+        select: "role",
         populate: {
           path: "permissions",
-          select:'permission', 
-          model:'Permission',
+          select: "permission",
         },
       })
-      .exec();  
+      .exec();
+
     if (!user) {
       console.log("User not found");
       return null;
@@ -59,17 +56,16 @@ async function getUserWithRolesAndPermissions(email: string) {
   }
 }
 
-
-export function testMongoose2(email: string) {
+export function testMongoose(email: string) {
   // 使用示例
   getUserWithRolesAndPermissions(email)
     .then((user) => {
       if (user) {
-        // console.log("User:", user);
+        console.log("User:", user);
         console.log("Roles:", user.roles);
         console.log(
           "Permissions:",
-          user.roles.flatMap((role:any) => role.permissions)
+          user.roles.flatMap((role) => role.permissions)
         );
       }
     })
@@ -77,14 +73,3 @@ export function testMongoose2(email: string) {
       console.error("Error:", error);
     });
 }
-
-
-
-export async function mainTest() {
-  // await connectToMongoDB();  
-  await mongoose.connect(DbConnectString);
-  console.log("Connected...");
-  TestAggregation();
-  return "test complete.";
-}
-

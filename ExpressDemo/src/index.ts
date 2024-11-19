@@ -1,5 +1,6 @@
 import express from 'express';
 import * as core from "express-serve-static-core";
+import { InitialWebSocketServic } from './websocket-server';
 
 
 
@@ -10,6 +11,7 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-app.listen(port, () => {
+const httpServer = app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}/`);
 });
+InitialWebSocketServic(httpServer);

@@ -1,11 +1,12 @@
 import * as WebSocket from "ws";
 import * as http from "http";
+import { IncomingMessage } from "http";
 const clients = new Map<string, WebSocket>();
 
 export function InitialWebSocketServic(server: http.Server) {
   const wss = new WebSocket.Server({ server: server });
 
-  wss.on("connection", (ws: WebSocket) => {
+  wss.on("connection", (ws: WebSocket, req:IncomingMessage) => {
     const clientId = generateClientId();
     clients.set(clientId, ws);
     console.log(`Client connected with ID: ${clientId}`);
