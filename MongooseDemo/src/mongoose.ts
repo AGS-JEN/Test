@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { CompanyModel } from "./Models/companyModel";
 import { BranchModel } from "./Models/branchModel";
 import { DbConnectString } from "./config";
-import { TestAggregation } from "./Tests/TestAggregation";
+import { TestAgg2, TestAggregation } from "./Tests/TestAggregation";
 
 // 假设你已经定义了User, Role, Permission的Schema
 const PermissionSchema = new mongoose.Schema({
@@ -84,7 +84,7 @@ export async function mainTest() {
   // await connectToMongoDB();  
   await mongoose.connect(DbConnectString);
   console.log("Connected...");
-  TestAggregation();
+  TestAgg2();
   return "test complete.";
 }
 
