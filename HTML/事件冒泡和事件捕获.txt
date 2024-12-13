@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Event Bubbling and Capturing Example</title>
+<style>
+  div {
+    padding: 20px;
+    border: 1px solid #000;
+    margin: 10px;
+  }
+  #outer {
+    background-color: #f2f2f2;
+  }
+  #inner {
+    background-color: #ddd;
+  }
+  #button {
+    background-color: #bada55;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<div id="outer">
+  Outer div
+  <div id="inner">
+    Inner div
+    <div id="button">Click Me!</div>
+  </div>
+</div>
+
+<script>
+  // 获取元素
+  var outerDiv = document.getElementById('outer');
+  var innerDiv = document.getElementById('inner');
+  var buttonDiv = document.getElementById('button');
+ // 事件冒泡阶段处理程序
+ outerDiv.addEventListener('click', function() {
+    alert('Outer div clicked (Bubble phase)');
+  }, false); // 注意这里的第三个参数是false，表示在冒泡阶段触发
+  // event.stopPropagation()方法//阻止事件继续冒泡
+  innerDiv.addEventListener('click', function() {
+    alert('Inner div clicked (Bubble phase)');
+  }, false);
+
+  buttonDiv.addEventListener('click', function() {
+    alert('Button clicked (Bubble phase)');
+  }, false);
+  // 事件捕获阶段处理程序
+  outerDiv.addEventListener('click', function() {
+    alert('Outer div clicked (Capture phase)');
+  }, true); // 注意这里的第三个参数是true，表示在捕获阶段触发
+
+  innerDiv.addEventListener('click', function() {
+    alert('Inner div clicked (Capture phase)');
+  }, true);
+
+  buttonDiv.addEventListener('click', function() {
+    alert('Button clicked (Capture phase)');
+  }, true);
+
+ 
+</script>
+
+</body>
+</html>

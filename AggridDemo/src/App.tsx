@@ -6,11 +6,12 @@ import { PagedGridExample } from './AgGrid/Pagination/demoB';
 import { FilterGridExample } from './AgGrid/Filter/FilterDemoA';
 import { RowDataUpdateDemo } from './AgGrid/DynamicDataSync/RowDataUpdate';
 import { QuickFilterGridSample } from './AgGrid/QuickFilter/QuickFilter';
+import { EditorGridExample } from './AgGrid/DateEditor/DateEditorDemo';
 
 function App() {
   return (
     <div className="App">
-      <QuickFilterGridSample></QuickFilterGridSample>
+      <EditorGridExample></EditorGridExample>
     </div>
   );
 }

@@ -1,1 +1,2 @@
 export const DbConnectString = "mongodb+srv://nimbusdev:AGS123%21%40%23@nimbus-dev-database.mongocluster.cosmos.azure.com/?tls=true&authMechanism=SCRAM-SHA-256&retrywrites=false&maxIdleTimeMS=120000";
+export const DbConnectString_local = "mongodb://localhost:27017/nimbus-001";

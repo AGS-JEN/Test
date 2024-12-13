@@ -6,8 +6,10 @@ import {
     GridPreDestroyedEvent,
     GridReadyEvent,
     GridState,
+    IToolPanelColumnCompParams,
     ModuleRegistry,
     RowSelectionOptions,
+    SideBarDef,
     StateUpdatedEvent,
 } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
@@ -94,6 +96,24 @@ export const FilterGridExample = () => {
         console.log('Grid state', currentState);
     }, [currentState]);
 
+    const sidebarDef = useMemo((): SideBarDef => {
+        return {
+          toolPanels: [
+            'filters',
+            {
+              id: 'columns',
+              labelDefault: 'columns',
+              labelKey: 'columns',
+              iconKey: 'columns',
+              toolPanel: 'agColumnsToolPanel',
+              toolPanelParams: {
+                suppressPivotMode: true,
+              } as IToolPanelColumnCompParams,
+            },
+          ],
+        };
+      }, []);
+      
     return (
         <div style={{ width: '100%', height: '100%' }}>
             <div className="example-wrapper">
@@ -115,7 +135,7 @@ export const FilterGridExample = () => {
                             rowData={rowData}
                             columnDefs={columnDefs}
                             defaultColDef={defaultColDef}
-                            sideBar={true}
+                            sideBar={sidebarDef}
                             pagination={true}
                             rowSelection={rowSelection}
                             suppressColumnMoveAnimation={true}

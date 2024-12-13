@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 import { CompanyModel } from "./Models/companyModel";
 import { BranchModel } from "./Models/branchModel";
-import { DbConnectString } from "./config";
-import { TestAgg2, TestAgg3, TestAggregation } from "./Tests/TestAggregation";
+import { DbConnectString, DbConnectString_local } from "./config";
+import { TestAgg2, TestAgg3, TestAggregation, TestAggregation5, TestAggregation6 } from "./Tests/TestAggregation";
+import { testUpsert } from "./Tests/TestUpsert";
 
 // 假设你已经定义了User, Role, Permission的Schema
 const PermissionSchema = new mongoose.Schema({
@@ -84,8 +85,11 @@ export async function mainTest() {
   // await connectToMongoDB();  
   await mongoose.connect(DbConnectString);
   console.log("Connected...");
+  // await testUpsert();
   // TestAgg2();
-  TestAgg3(['67587f59b572ea286ee6a415','66be0c7586120ca1f2f53e6b']);
+  // TestAgg3(['67587f59b572ea286ee6a415','66be0c7586120ca1f2f53e6b']);
+  //  TestAggregation5();
+   TestAggregation6();
   return "test complete.";
 }
 

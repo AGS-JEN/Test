@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  nacos:
+    image: nacos/nacos-server:latest
+    container_name: nacos
+    ports:
+      - "8848:8848"
+      - "9848:9848" # RMI PORT
+      - "9501:9501" # 如果启用了gRPC，则需要映射此端口
+    environment:
+      - MODE=standalone
+    volumes:
+      - ./data:/home/nacos/data  # 数据持久化
+      - ./logs:/home/nacos/logs  # 日志持久化
+    restart: always
+    networks:
+      - nacos-net
+
+networks:
+  nacos-net:
+    driver: bridge
