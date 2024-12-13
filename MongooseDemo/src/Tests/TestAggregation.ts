@@ -1,6 +1,7 @@
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { CompanyModel } from "../Models/companyModel";
 import { ShipmentModel } from "../Models/shipmentModel";
+import { HouseModel } from "../Models/houseModel";
 
 export async function TestAggregation(){
 
@@ -195,4 +196,23 @@ export async function TestAgg2() {
     console.log(aggregationResult[0].allBrokers)
     
     
+}
+
+
+export async function TestAgg3(shipmentIds: string[]) {
+    const objectShipmentsIds = shipmentIds.map(id => new mongoose.Types.ObjectId(id));
+    const result = await HouseModel.aggregate([
+        {
+          $match: {
+            shipmentId: { $in:  objectShipmentsIds }
+          }
+        },
+        {
+          $group: {
+            _id: "$shipmentId",
+            ids: { $addToSet: "$_id" } // 使用 $push 也可以，取决于你是否需要唯一性
+          }
+        }
+      ]);
+    console.log(result);
 }
