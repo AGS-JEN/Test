@@ -56,20 +56,20 @@ async function getUserWithRolesAndPermissions(email: string) {
   }
 }
 
-export function testMongoose(email: string) {
-  // 使用示例
-  getUserWithRolesAndPermissions(email)
-    .then((user) => {
-      if (user) {
-        console.log("User:", user);
-        console.log("Roles:", user.roles);
-        console.log(
-          "Permissions:",
-          user.roles.flatMap((role) => role.permissions)
-        );
-      }
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
-}
+// export function testMongoose(email: string) {
+//   // 使用示例
+//   getUserWithRolesAndPermissions(email)
+//     .then((user) => {
+//       if (user) {
+//         console.log("User:", user);
+//         console.log("Roles:", user.roles);
+//         console.log(
+//           "Permissions:",
+//           user.roles.flatMap((role) => role.permissions)
+//         );
+//       }
+//     })
+//     .catch((error) => {
+//       console.error("Error:", error);
+//     });
+// }

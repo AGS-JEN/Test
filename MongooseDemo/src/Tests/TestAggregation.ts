@@ -3,6 +3,8 @@ import { CompanyModel } from "../Models/companyModel";
 import { ShipmentModel } from "../Models/shipmentModel";
 import { HouseModel } from "../Models/houseModel";
 
+
+
 export async function TestAggregation() {
   const aggregation: any = [
     {
@@ -152,10 +154,47 @@ export async function TestAggregation5() {
   return result;
 }
 
-export async function TestAggregation6() {
+export async function TestAggregation12() {
   const aggregation: any =  [{"$match":{"$expr":{"$regexMatch":{"input":{"$dateToString":{"format":"%Y-%m-%d %H:%M:%S","date":"$arrivedDate"}},"regex":"19","options":"i"}}}},{"$match":{"createdAt":{"$gte":"2024-11-21T00:00:00.000Z","$lte":"2024-11-22T23:59:59.999Z"}}},{"$lookup":{"from":"organizations","localField":"clientId","foreignField":"_id","as":"clientDetails"}},{"$lookup":{"from":"organizations","localField":"deconsolidatorId","foreignField":"_id","as":"deconsolidatorDetails"}},{"$lookup":{"from":"carriers","localField":"carrierId","foreignField":"_id","as":"carrierDetails"}},{"$lookup":{"from":"houses","localField":"_id","foreignField":"shipmentId","as":"houseDetails"}},{"$unwind":{"path":"$clientDetails","preserveNullAndEmptyArrays":true}},{"$unwind":{"path":"$deconsolidatorDetails","preserveNullAndEmptyArrays":true}},{"$unwind":{"path":"$carrierDetails","preserveNullAndEmptyArrays":true}},{"$unwind":{"path":"$houseDetails","preserveNullAndEmptyArrays":true}},{"$project":{"_id":1,"shipmentNumber":1,"iscAmountPaid":{"$ifNull":["$iscAmountPaid",0]},"flights":1,"remarksInternal":{"$ifNull":["$remarksInternal",""]},"remarksClient":{"$ifNull":["$remarksClient",""]},"received1f":{"$ifNull":["$received1f",false]},"receptaclesCount":1,"totalPallets":{"$ifNull":["$totalPallets",0]},"bup":{"$ifNull":["$bup",false]},"branchId":1,"branchCode":1,"destinationPortId":1,"destinationPortCode":1,"originPortId":1,"originPortCode":1,"entryType":1,"carrierId":1,"carrierCode":1,"statusId":1,"holdsToBillCount":1,"housesCount":1,"expectedReceptacleCount":1,"released":1,"receptaclesSent":1,"arrivedDate":1,"airportPickupDate":1,"arrivedAtWarehouseDate":1,"consignedToFinalMileCarrierDate":1,"pickedUpDeliveredByFmCarrierDate":1,"breakdownFinishedDate":1,"deliveredByFmCarrierDate":1,"createdAt":1,"createdBy":1,"updatedAt":1,"updatedBy":1,"isSplit":1,"clientDetails.fullName":1,"deconsolidatorDetails.fullName":1,"deconsolidatorDetails.poaCreditReceived":1,"carrierDetails.type":1,"carrierDetails.name":1,"houseDetails.lastMileCarrierCode":1,"houseDetails.carrierShipmentNumber":1,"houseDetails.createdAt":1}},{"$skip":0},{"$limit":50}]
 
   const result = await ShipmentModel.aggregate(aggregation).exec();
+  console.log("aggregation result = ", JSON.stringify(result));
+  return result;
+}
+
+export async function TestAggregation6() {
+  const shipmentIdsArray=[new Types.ObjectId('67083578b4ad32a0f83479f8')]
+  const aggregation: any = [
+    // 匹配指定的 ShipmentId
+    {
+      $match: {
+        shipmentId: { $in: shipmentIdsArray }
+      }
+    },
+    // 投影只选择 lastMileCarrierCode 字段
+    {
+      $project: {
+        lastMileCarrierCode: 1,
+        _id: 0
+      }
+    },
+    // 将所有 lastMileCarrierCode 放入一个数组中
+    {
+      $group: {
+        _id: null,
+        lastMileCarrierCodes: { $addToSet: "$lastMileCarrierCode" }
+      }
+    },
+    // 只返回 lastMileCarrierCodes 数组
+    {
+      $project: {
+        _id: 0,
+        lastMileCarrierCodes: 1
+      }
+    }
+  ]
+
+  const result = await HouseModel.aggregate(aggregation).exec();
   console.log("aggregation result = ", JSON.stringify(result));
   return result;
 }
