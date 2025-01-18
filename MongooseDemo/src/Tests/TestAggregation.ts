@@ -162,7 +162,7 @@ export async function TestAggregation12() {
   return result;
 }
 
-export async function TestAggregation6() {
+export async function TestAggregation8() {
   const shipmentIdsArray=[new Types.ObjectId('67083578b4ad32a0f83479f8')]
   const aggregation: any = [
     // 匹配指定的 ShipmentId
@@ -199,54 +199,125 @@ export async function TestAggregation6() {
   return result;
 }
 
+export async function TestAggregation6() {
+  console.log("开始测试: ");
+  
+  const shipmentIdObj = new Types.ObjectId('6781a26282743ff6aaf67b5d');
+  const aggregate =  [
+      {
+        '$match': {
+          'shipmentId': shipmentIdObj
+        }
+      }, {
+        '$group': {
+          '_id': '$amsStatusId', 
+          'total': {
+            '$sum': 1
+          }
+        }
+      }, {
+        '$project': {
+          'statusName': {
+            '$switch': {
+              'branches': [
+                {
+                  'case': {
+                    '$eq': [
+                      '$_id', 0
+                    ]
+                  }, 
+                  'then': 'NotSubmitted'
+                }, {
+                  'case': {
+                    '$eq': [
+                      '$_id', 1
+                    ]
+                  }, 
+                  'then': 'Submitted'
+                }, {
+                  'case': {
+                    '$eq': [
+                      '$_id', 2
+                    ]
+                  }, 
+                  'then': 'DataAccepted'
+                }, {
+                  'case': {
+                    '$eq': [
+                      '$_id', 3
+                    ]
+                  }, 
+                  'then': 'Released'
+                }, {
+                  'case': {
+                    '$eq': [
+                      '$_id', 4
+                    ]
+                  }, 
+                  'then': 'Rejected'
+                }, {
+                  'case': {
+                    '$eq': [
+                      '$_id', 5
+                    ]
+                  }, 
+                  'then': 'OnHold'
+                }
+              ], 
+              'default': 'NotSubmitted'
+            }
+          }, 
+          'total': 1
+        }
+      }, {
+        '$group': {
+          '_id': '$statusName', 
+          'total': {
+            '$sum': '$total'
+          }
+        }
+      }
+    ]
+
+  const [result, shipment] = await Promise.all([ HouseModel.aggregate(aggregate), ShipmentModel.findById('6781a26282743ff6aaf67b5d')]);
+  const amsStatus =  [
+      "NotSubmitted",
+      "Submitted",
+      "DataAccepted",
+      "Released",
+      "Rejected",
+      "OnHold"
+  ];
+  console.log("house aggregation result: ", result);
+  console.log("shipment: ", shipment)
+  
+
+  const resultStatus =  amsStatus.map((status) => {
+      const total = result.find((r) => r._id === status)?.total || 0;
+      return {
+          status,
+          total
+      }
+  });
+
+   resultStatus.push({ status: 'TotalHouses', total: shipment?.housesCount || 0 });
+   return resultStatus;
+}
+
 export async function TestAgg2() {
-  const aggregationResult = await CompanyModel.aggregate([
+  const shipmentIdObj = new Types.ObjectId('6781a14f82743ff6aaf64893');
+  const aggregationResult = await HouseModel.aggregate([
     {
-      $match: { _id: new Types.ObjectId("66b381df4a17e200495cef91") },
-    },
-    // {
-    //   $lookup: {
-    //     from: "brokers",
-    //     localField: "brokers",
-    //     foreignField: "_id",
-    //     as: "allBrokers",
-    //   },
-    // },
-    {
-      $addFields: {
-        brokerObjectIds: {
-          $map: {
-            input: "$brokers",
-            as: "brokerId",
-            in: { $toObjectId: "$$brokerId" },
-          },
-        },
-      },
-    },
-    {
-      $lookup: {
-        from: "brokers",
-        localField: "brokerObjectIds",
-        foreignField: "_id",
-        as: "allBrokers",
-      },
-    },
-    // {
-    //   $unwind: "$allBrokers",
-    // },
-    // {
-    //   $project: {
-    //     name: 1,
-    //     brokers: 1,
-    //     totalCount: 1,
-    //   },
-    // },
+      '$match': {
+        'shipmentId': shipmentIdObj
+      }
+    }
   ]);
   console.log("result is :");
   console.log(aggregationResult);
   console.log("-------------------------");
 
-  console.log(aggregationResult[0].allBrokers);
+  // console.log(aggregationResult[0].allBrokers);
 }
 
 export async function TestAgg3(shipmentIds: string[]) {

@@ -89,7 +89,8 @@ export async function mainTest() {
   // TestAgg2();
   // TestAgg3(['67587f59b572ea286ee6a415','66be0c7586120ca1f2f53e6b']);
   //  TestAggregation5();
-   TestAggregation6();
+  //  TestAggregation6();
+   TestAgg2();
   return "test complete.";
 }
 

@@ -1,3 +1,4 @@
+import { testAzureBlobDownload } from "./azureBlob/AzureBlobDownload";
 import { uploadFileToBlob } from "./azureBlob/azureBlobTest";
 import { testRecord } from "./basic/TestRecord";
 import { startExpressServer } from "./express/app";
@@ -15,4 +16,7 @@ console.log("hello, world");
 
 // startExpressServer();
 
-testWebSocketClient();
+// testWebSocketClient();
+testAzureBlobDownload().then(() => {
+    console.log("complete");}
+);
